@@ -1,0 +1,9 @@
+model User {
+  id: uuid
+  tasks: Task[]
+}
+
+model Task {
+  id: uuid
+  user: User
+}

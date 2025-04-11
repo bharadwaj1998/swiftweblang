@@ -1,0 +1,14 @@
+model Task {
+  id: uuid
+  title: string
+  description: string?
+  completed: bool = false
+  priority: int = 1
+  value: float = 1.5
+  tags: string[]
+  subtasks: Task[]
+}
+model User{
+  id: uuid
+  tasks: Task[]
+}
