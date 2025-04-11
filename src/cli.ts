@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { tokenize } from './lexer';
 import { parse } from './parser';
 import { generateCode } from './generator';
-import { UnexpectedTokenError, MissingTokenError, InvalidDefaultValueError, InvalidTypeError } from './error';
+import { UnexpectedTokenError, MissingTokenError, InvalidDefaultValueError, InvalidTypeError } from "./error";
 
 console.log("Starting CLI");
 
@@ -13,7 +13,21 @@ try {
   const tokens = tokenize(source);
   console.log("Tokens after tokenize:", tokens);
 
-  const ast = parse(tokens);
+  type ASTNode =
+    | {
+        type: "ModelDeclaration";
+        name: string;
+        fields: {
+          name: string;
+          fieldType: string;
+          optional: boolean;
+          defaultValue: string | number | boolean | null;
+          isArray: boolean;
+          relation: boolean;
+          relatedModel: string | null;
+        }[];
+      };
+  const ast: ASTNode[] = parse(tokens);
   console.log("AST generated:", ast);
 
   const { html, js, frontendCode } = generateCode(ast);

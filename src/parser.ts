@@ -6,7 +6,7 @@ type ASTNode =
   | {
       type: 'ModelDeclaration';
       name: string;
-      fields: { name: string; fieldType: string; optional: boolean; defaultValue: string | null; isArray: boolean; relation: boolean; relatedModel: string | null }[];
+      fields: { name: string; fieldType: string; optional: boolean; defaultValue: string | number | boolean | null; isArray: boolean; relation: boolean; relatedModel: string | null }[];
     };
 
 export function parse(tokens: Token[]): ASTNode[] {
@@ -28,7 +28,7 @@ export function parse(tokens: Token[]): ASTNode[] {
     return token;
   }
 
-  
+
 
 
   function expectTypeOrIdentifier(): { type: string; relatedModel: string | null; isArray: boolean } {
@@ -64,7 +64,7 @@ export function parse(tokens: Token[]): ASTNode[] {
       const name = expect('identifier').value;
       expect('symbol', '{');
 
-      const fields: { name: string; fieldType: string; optional: boolean; defaultValue: string | null; isArray: boolean; relation: boolean; relatedModel: string | null }[] = [];
+      const fields: { name: string; fieldType: string; optional: boolean; defaultValue: string | number | boolean | null; isArray: boolean; relation: boolean; relatedModel: string | null }[] = []; // FIX: Updated type here
 
       while (tokens[i].value !== '}') {
         let optional = false;
@@ -76,21 +76,22 @@ export function parse(tokens: Token[]): ASTNode[] {
         const fieldName = expect("identifier").value;
         expect("symbol", ":");
         const { type: fieldType, relatedModel, isArray } = expectTypeOrIdentifier();
-        let defaultValue = null;
+        let defaultValue: string | number | boolean | null = null; // FIX: Added type
         let relation = false;
         if (fieldType === "relation") {
           relation = true;
         }
         if (tokens[i].value === "=") {
           expect("symbol", "=");
-          if (fieldType === "bool") {
-            defaultValue = expect("bool").value;
-          } else if (fieldType === "int") {
-            defaultValue = expect("int").value;
-          } else if (fieldType === "string") {
+          const token = tokens[i];
+          if (token.type === "bool" && fieldType === "bool") {
+            defaultValue = expect("bool").value === "true";
+          } else if (token.type === "int" && fieldType === "int") {
+            defaultValue = parseInt(expect("int").value, 10);
+          } else if (token.type === "string" && fieldType === "string") {
             defaultValue = expect("string").value;
-          } else if (fieldType === "float") {
-            defaultValue = expect("float").value;
+          } else if (token.type === "float" && fieldType === "float") {
+            defaultValue = parseFloat(expect("float").value);
           } else{
             throw new InvalidDefaultValueError(tokens[i].line, "bool, int, float or string", tokens[i].value);
           }

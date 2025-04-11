@@ -1,12 +1,13 @@
 import * as fs from 'fs';
 
 type ASTNode =
-  | {
-      type: 'ModelDeclaration';
-      name: string;
-      fields: { name: string; fieldType: string; optional: boolean; defaultValue: string | null, isArray: boolean }[];
-    };
+    | {
+        type: "ModelDeclaration";
+        name: string;
+        fields: { name: string; fieldType: string; optional: boolean; defaultValue: string | number | boolean | null; isArray: boolean; relation: boolean; relatedModel: string | null }[];
+    }
 
+  
 function generateComponentCode(node: ASTNode) {
     if (node.type === 'ModelDeclaration') {
         let componentCode = `import React from 'react';\n\n`;
