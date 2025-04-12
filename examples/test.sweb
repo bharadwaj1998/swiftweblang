@@ -1,14 +1,14 @@
 model User {
   id: uuid
-  name: string = "John Doe"
-  age: int = 30
-  height: float = 1.75
-  isActive: bool = true
-  tasks: Task[]
+  name?: string = "John Doe"
+  age?: int = 30
+  height?: float = 1.75
+  isActive?: bool = true
+  tasks?: Task[]
 }
 
 model Task {
   id: uuid
-  description: string
-  isComplete: bool = false
+  description?: string
+  isComplete?: bool = false
 }

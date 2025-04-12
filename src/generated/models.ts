@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
 
 @Entity()
 export class User {
@@ -13,7 +13,7 @@ export class User {
   @Column({ nullable: true })
   isActive?: boolean  = 1.75;
   @Column({ type: 'jsonb',  nullable: true })
-  tasks?: Partial<array>  = 1.75;
+  tasks?: Task[];
 }
 
 @Entity()
